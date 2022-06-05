@@ -24,7 +24,7 @@ def get_model_search_filter(Model):
             if value in EMPTY_VALUES:
                 return qs
 
-            operators = list(map(lambda x: x.ilike('%{}%'.format(value)), search_fields))
+            operators = list(map(lambda x: x.ilike(f'%{value}%'), search_fields))
             return qs.filter(or_(*operators))
 
     return ModelSearchFilter

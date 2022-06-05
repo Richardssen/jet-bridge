@@ -22,13 +22,13 @@ class SqlSerializer(Serializer):
     def validate_query(self, value):
         forbidden = ['insert', 'update', 'delete', 'grant', 'show']
         for i in range(len(forbidden)):
-            forbidden.append('({}'.format(forbidden[i]))
-        if any(map(lambda x: ' {} '.format(value.lower()).find(' {} '.format(x)) != -1, forbidden)):
+            forbidden.append(f'({forbidden[i]}')
+        if any(map(lambda x: f' {x} ' in f' {value.lower()} ', forbidden)):
             raise ValidationError('forbidden query')
 
         i = 0
         while value.find('%s') != -1:
-            value = value.replace('%s', ':param_{}'.format(i), 1)
+            value = value.replace('%s', f':param_{i}', 1)
             i += 1
 
         return value

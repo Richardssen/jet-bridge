@@ -47,8 +47,7 @@ class GenericAPIView(APIView):
         }
 
     def filter_queryset(self, queryset):
-        filter_instance = self.get_filter()
-        if filter_instance:
+        if filter_instance := self.get_filter():
             queryset = filter_instance.filter_queryset(queryset)
         return queryset
 

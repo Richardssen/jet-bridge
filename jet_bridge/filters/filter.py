@@ -12,9 +12,9 @@ def json_icontains(qs, model, field_name, value):
     field_type = model_field.property.columns[0].type
 
     if isinstance(field_type, JSONB):
-        return qs.filter(model_field.cast(Unicode).ilike('%{}%'.format(value)))
+        return qs.filter(model_field.cast(Unicode).ilike(f'%{value}%'))
     else:
-        return qs.filter(model_field.astext.ilike('%{}%'.format(value)))
+        return qs.filter(model_field.astext.ilike(f'%{value}%'))
 
 
 def coveredby(qs, model, field_name, value):

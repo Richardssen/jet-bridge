@@ -7,9 +7,7 @@ from jet_bridge.db import Session
 def token_command():
     try:
         session = Session()
-        token = get_token(session)
-
-        if token:
+        if token := get_token(session):
             logging.info('Jet Admin Token:')
             logging.info(token)
         else:

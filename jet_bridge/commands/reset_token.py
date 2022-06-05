@@ -12,10 +12,10 @@ def reset_token_command():
         logging.info('Token reset')
 
         if not created and token:
-            logging.info('Token already exists: {}'.format(token.token))
-        elif not created and not token:
+            logging.info(f'Token already exists: {token.token}')
+        elif not created:
             logging.info('Token creation failed')
-        elif created and token:
-            logging.info('Token created: {}'.format(token.token))
+        elif token:
+            logging.info(f'Token created: {token.token}')
     finally:
         session.close()

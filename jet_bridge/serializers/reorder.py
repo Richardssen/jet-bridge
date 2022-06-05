@@ -38,11 +38,6 @@ def get_reorder_serializer(Model, queryset, session):
                 ).update(
                     {ordering_field: ordering - 1}
                 )
-                queryset.filter(
-                    primary_key == self.validated_data['item']
-                ).update(
-                    {ordering_field: segment_to}
-                )
             else:
                 queryset.filter(
                     ordering >= segment_from,
@@ -50,12 +45,11 @@ def get_reorder_serializer(Model, queryset, session):
                 ).update(
                     {ordering_field: ordering + 1}
                 )
-                queryset.filter(
-                    primary_key == self.validated_data['item']
-                ).update(
-                    {ordering_field: segment_to}
-                )
-
+            queryset.filter(
+                primary_key == self.validated_data['item']
+            ).update(
+                {ordering_field: segment_to}
+            )
             session.commit()
 
     return ReorderSerializer

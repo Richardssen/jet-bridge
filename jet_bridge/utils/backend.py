@@ -8,7 +8,7 @@ from jet_bridge.models.token import Token
 
 
 def api_method_url(method):
-    return '{}/{}'.format(settings.API_BASE_URL, method)
+    return f'{settings.API_BASE_URL}/{method}'
 
 
 def get_token(session):
@@ -57,7 +57,7 @@ def is_token_activated(session):
     if not token:
         return False
 
-    url = api_method_url('project_tokens/{}/'.format(token.token))
+    url = api_method_url(f'project_tokens/{token.token}/')
     headers = {
         'User-Agent': 'Jet Django'
     }
@@ -92,12 +92,12 @@ def set_token(session, token):
         project_token.token = token_clean
         project_token.date_add = datetime.now()
         session.commit()
-        logging.info('Token changed to {}'.format(project_token.token))
+        logging.info(f'Token changed to {project_token.token}')
     else:
         project_token = Token(token=token_clean, date_add=datetime.now())
         session.add(project_token)
         session.commit()
-        logging.info('Token created {}'.format(project_token.token))
+        logging.info(f'Token created {project_token.token}')
 
 
 def project_auth(session, token, permission=None):
@@ -118,7 +118,7 @@ def project_auth(session, token, permission=None):
     }
 
     if permission:
-        data.update(permission)
+        data |= permission
 
     r = requests.request('POST', url, data=data, headers=headers)
     success = 200 <= r.status_code < 300

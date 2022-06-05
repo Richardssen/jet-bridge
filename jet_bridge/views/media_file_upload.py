@@ -15,7 +15,7 @@ class MediaFileUploadHandler(APIView):
         file_root, file_ext = os.path.splitext(file_name)
 
         while os.path.exists(name):
-            name = os.path.join(dir_name, '%s_%s%s' % (file_root, get_random_string(7), file_ext))
+            name = os.path.join(dir_name, f'{file_root}_{get_random_string(7)}{file_ext}')
 
         return name
 
@@ -41,8 +41,13 @@ class MediaFileUploadHandler(APIView):
         with open(upload_path, 'wb') as f:
             f.write(file['body'])
 
-        response = Response({
-            'uploaded_path': relative_upload_path,
-            'uploaded_url': self.build_absolute_uri('/media/{}'.format(relative_upload_path))
-        })
+        response = Response(
+            {
+                'uploaded_path': relative_upload_path,
+                'uploaded_url': self.build_absolute_uri(
+                    f'/media/{relative_upload_path}'
+                ),
+            }
+        )
+
         self.write_response(response)

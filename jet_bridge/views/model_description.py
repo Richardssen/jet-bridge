@@ -44,11 +44,7 @@ class ModelDescriptionsHandler(APIView):
             }
 
         def map_relation(relation):
-            field = None
-
-            if relation.direction == ONETOMANY:
-                field = 'ManyToOneRel'
-
+            field = 'ManyToOneRel' if relation.direction == ONETOMANY else None
             return {
                 'name': relation.key,
                 'related_model': {
@@ -83,15 +79,16 @@ class ModelDescriptionsHandler(APIView):
                 other_relationship = m2m_relationships[0] if self_relationship == m2m_relationships[1] else \
                 m2m_relationships[1]
 
-                result.append({
-                    'name': 'M2M {} {}'.format(self_relationship.table.name, other_relationship.table.name),
-                    'related_model': {
-                        'model': other_relationship.table.name
-                    },
-                    'field': 'ManyToManyField',
-                    'related_model_field': self_relationship.table.name,
-                    'through': {'model': relation.table.name}
-                })
+                result.append(
+                    {
+                        'name': f'M2M {self_relationship.table.name} {other_relationship.table.name}',
+                        'related_model': {'model': other_relationship.table.name},
+                        'field': 'ManyToManyField',
+                        'related_model_field': self_relationship.table.name,
+                        'through': {'model': relation.table.name},
+                    }
+                )
+
 
             return result
 

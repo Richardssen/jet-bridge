@@ -23,16 +23,16 @@ def get_model_m2m_filter(Model):
             relations = []
 
             for relationship in mapper.relationships:
-                for sub_relationship in relationship.mapper.relationships:
-                    if sub_relationship.table.name != relation_name:
-                        continue
-
-                    relations.append({
+                relations.extend(
+                    {
                         'relationship': relationship,
-                        'sub_relationship': sub_relationship
-                    })
+                        'sub_relationship': sub_relationship,
+                    }
+                    for sub_relationship in relationship.mapper.relationships
+                    if sub_relationship.table.name == relation_name
+                )
 
-            if len(relations) == 0:
+            if not relations:
                 return qs.filter(sql.false())
 
             relation = relations[0]

@@ -26,9 +26,7 @@ def build_engine_url():
         url.append(settings.DATABASE_USER)
 
         if settings.DATABASE_PASSWORD:
-            url.append(':')
-            url.append(settings.DATABASE_PASSWORD)
-
+            url.extend((':', settings.DATABASE_PASSWORD))
         if settings.DATABASE_HOST:
             url.append('@')
 
@@ -36,9 +34,7 @@ def build_engine_url():
         url.append(settings.DATABASE_HOST)
 
         if settings.DATABASE_PORT:
-            url.append(':')
-            url.append(settings.DATABASE_PORT)
-
+            url.extend((':', settings.DATABASE_PORT))
         url.append('/')
 
     if settings.DATABASE_ENGINE == 'sqlite':
@@ -68,6 +64,6 @@ if engine_url:
     MappedBase = automap_base(metadata=metadata)
 
     def name_for_scalar_relationship(base, local_cls, referred_cls, constraint):
-        return referred_cls.__name__.lower() + '_relation'
+        return f'{referred_cls.__name__.lower()}_relation'
 
     MappedBase.prepare(name_for_scalar_relationship=name_for_scalar_relationship)

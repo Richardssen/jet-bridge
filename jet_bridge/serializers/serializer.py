@@ -23,9 +23,10 @@ class Serializer(Field):
 
         if hasattr(self.meta, 'fields'):
             for field_name in self.meta.fields:
-                assert hasattr(self, field_name), (
-                    'No such field %s for serializer %s' % (field_name, self.__class__.__name__)
-                )
+                assert hasattr(
+                    self, field_name
+                ), f'No such field {field_name} for serializer {self.__class__.__name__}'
+
                 field = getattr(self, field_name)
                 field.field_name = field_name
                 fields.append(field)
@@ -85,7 +86,7 @@ class Serializer(Field):
             if field.field_name not in value.keys() and self.partial:
                 continue
 
-            validate_method = getattr(self, 'validate_' + field.field_name, None)
+            validate_method = getattr(self, f'validate_{field.field_name}', None)
 
             try:
                 validated_value = field.run_validation(field_value)

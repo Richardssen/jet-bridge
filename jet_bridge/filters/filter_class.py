@@ -18,26 +18,25 @@ class FilterClass(object):
     def update_filters(self):
         filters = []
 
-        if self.meta:
-            if hasattr(self.meta, 'model'):
-                Model = self.meta.model
-                mapper = inspect(Model)
-                columns = mapper.columns
+        if self.meta and hasattr(self.meta, 'model'):
+            Model = self.meta.model
+            mapper = inspect(Model)
+            columns = mapper.columns
 
-                if hasattr(self.meta, 'fields'):
-                    columns = filter(lambda x: x.name in self.meta.fields, columns)
+            if hasattr(self.meta, 'fields'):
+                columns = filter(lambda x: x.name in self.meta.fields, columns)
 
-                for column in columns:
-                    item = filter_for_data_type(column.type)
-                    for lookup in item['lookups']:
-                        instance = item['filter_class'](
-                            field_name=column.key,
-                            model=Model,
-                            lookup=lookup,
-                            request=self.request,
-                            handler=self.handler
-                        )
-                        filters.append(instance)
+            for column in columns:
+                item = filter_for_data_type(column.type)
+                for lookup in item['lookups']:
+                    instance = item['filter_class'](
+                        field_name=column.key,
+                        model=Model,
+                        lookup=lookup,
+                        request=self.request,
+                        handler=self.handler
+                    )
+                    filters.append(instance)
 
         declared_filters = filter(lambda x: isinstance(x[1], Filter), map(lambda x: (x, getattr(self, x)), dir(self)))
 
@@ -53,7 +52,7 @@ class FilterClass(object):
     def filter_queryset(self, queryset):
         for item in self.filters:
             if self.handler and item.name:
-                argument_name = '{}__{}'.format(item.name, item.lookup)
+                argument_name = f'{item.name}__{item.lookup}'
                 value = self.handler.get_argument(argument_name, None)
 
                 if value is None and item.lookup == lookups.DEFAULT_LOOKUP:

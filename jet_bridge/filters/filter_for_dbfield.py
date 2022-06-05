@@ -95,7 +95,11 @@ except ImportError:
 
 
 def filter_for_data_type(value):
-    for date_type, filter_data in FILTER_FOR_DBFIELD.items():
-        if isinstance(value, date_type):
-            return filter_data
-    return FILTER_FOR_DBFIELD_DEFAULT
+    return next(
+        (
+            filter_data
+            for date_type, filter_data in FILTER_FOR_DBFIELD.items()
+            if isinstance(value, date_type)
+        ),
+        FILTER_FOR_DBFIELD_DEFAULT,
+    )

@@ -16,7 +16,7 @@ class JSONEncoder(json.JSONEncoder):
         if isinstance(obj, datetime.datetime):
             representation = obj.isoformat()
             if representation.endswith('+00:00'):
-                representation = representation[:-6] + 'Z'
+                representation = f'{representation[:-6]}Z'
             return representation
         elif isinstance(obj, datetime.date):
             return obj.isoformat()
@@ -41,5 +41,5 @@ class JSONEncoder(json.JSONEncoder):
             except Exception:
                 pass
         elif hasattr(obj, '__iter__'):
-            return tuple(item for item in obj)
+            return tuple(obj)
         return super(JSONEncoder, self).default(obj)

@@ -28,9 +28,8 @@ def get_random_string(length, allowed_chars='abcdefghijklmnopqrstuvwxyzABCDEFGHI
         # is better than absolute predictability.
         random.seed(
             hashlib.sha256(
-                ("%s%s%s" % (
-                    random.getstate(),
-                    time.time(),
-                    salt)).encode('utf-8')
-            ).digest())
-    return ''.join(random.choice(allowed_chars) for i in range(length))
+                f"{random.getstate()}{time.time()}{salt}".encode('utf-8')
+            ).digest()
+        )
+
+    return ''.join(random.choice(allowed_chars) for _ in range(length))

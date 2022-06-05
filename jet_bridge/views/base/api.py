@@ -69,7 +69,7 @@ class APIView(tornado.web.RequestHandler):
         self.finish()
 
     def build_absolute_uri(self, url):
-        return self.request.protocol + "://" + self.request.host + url
+        return f"{self.request.protocol}://{self.request.host}{url}"
 
     def write_response(self, response):
         for name, value in response.header_items():
@@ -89,32 +89,33 @@ class APIView(tornado.web.RequestHandler):
             self.render('403.html', **{
                 'path': self.request.path,
             })
-        else:
-            if settings.DEBUG:
-                ctx = {
-                    'path': self.request.path,
-                    'full_path':  self.request.protocol + "://" + self.request.host + self.request.path,
-                    'method': self.request.method,
-                    'version': VERSION,
-                    'current_datetime': datetime.now().strftime('%c'),
-                    'python_version': platform.python_version(),
-                    'python_executable': sys.executable,
-                    'python_path': sys.path
+        elif settings.DEBUG:
+            ctx = {
+                'path': self.request.path,
+                'full_path': f"{self.request.protocol}://{self.request.host}{self.request.path}",
+                'method': self.request.method,
+                'version': VERSION,
+                'current_datetime': datetime.now().strftime('%c'),
+                'python_version': platform.python_version(),
+                'python_executable': sys.executable,
+                'python_path': sys.path,
+            }
+
+
+            if exc:
+                last_traceback = traceback
+
+                while last_traceback.tb_next:
+                    last_traceback = last_traceback.tb_next
+
+                ctx |= {
+                    'exception_type': exc_type.__name__,
+                    'exception_value': str(exc),
+                    'exception_last_traceback_line': last_traceback.tb_lineno,
+                    'exception_last_traceback_name': last_traceback.tb_frame,
                 }
 
-                if exc:
-                    last_traceback = traceback
 
-                    while last_traceback.tb_next:
-                        last_traceback = last_traceback.tb_next
-
-                    ctx.update({
-                        'exception_type': exc_type.__name__,
-                        'exception_value': str(exc),
-                        'exception_last_traceback_line': last_traceback.tb_lineno,
-                        'exception_last_traceback_name': last_traceback.tb_frame
-                    })
-
-                self.render('500.debug.html', **ctx)
-            else:
-                self.render('500.html')
+            self.render('500.debug.html', **ctx)
+        else:
+            self.render('500.html')
